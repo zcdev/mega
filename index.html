@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Mega Million</title>
+<script>
+function generator(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+var array = [];
+for (var i=0; i<6; i++){	
+var mega = generator(1,15);
+var nums = generator(1,75);
+	if (i < 1) {
+		array.push(mega);
+	} else { 
+        while (array.indexOf(nums) > -1) {
+		nums = generator(1,75);
+		}
+        array.push(nums);
+    }
+}      
+alert(array);
+
+</script>
+</head>
+
+<body>
+	<div>
+		<ul>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+	</div>
+</body>
+</html>
