@@ -1,12 +1,38 @@
-
 <!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Mega Million</title>
+<style>
+	body {
+		background: #000;
+		color: #fff;
+		font-family: arial;
+		margin: auto;
+		text-align: center;
+	}
+	li {
+		border-radius: 100%;
+		background: #fff;
+		width: 100px;
+		height: 100px;
+		color: #000;
+		margin-left: 0;
+		font-size: 50px;
+		line-height: 2;
+		padding: 10px;
+		text-align: center;
+		display: inline-block;
+		margin: 10px;
+	}
+	li:last-child {
+		color: red;
+	}
+</style>
 </head>
 
 <body>
+	<h1>Mega Million Numbers Generator</h1>
 	<div id="numbers">
 	</div>
 </body>
@@ -28,11 +54,8 @@ let nums = generator(1,75);
     }
 }      
 console.log(array);
-
 ul = document.createElement('ul');
-
 document.getElementById('numbers').appendChild(ul);
-
 array.forEach(function (item) {
     let li = document.createElement('li');
     ul.appendChild(li);
