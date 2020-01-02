@@ -4,14 +4,20 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Mega Million</title>
+</head>
+
+<body>
+	<div id="numbers">
+	</div>
+</body>
 <script>
 function generator(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-var array = [];
-for (var i=0; i<6; i++){	
-var mega = generator(1,15);
-var nums = generator(1,75);
+let array = [];
+for (let i=0; i<6; i++){	
+let mega = generator(1,15);
+let nums = generator(1,75);
 	if (i < 1) {
 		array.push(mega);
 	} else { 
@@ -21,21 +27,16 @@ var nums = generator(1,75);
         array.push(nums);
     }
 }      
-alert(array);
+console.log(array);
 
+ul = document.createElement('ul');
+
+document.getElementById('numbers').appendChild(ul);
+
+array.forEach(function (item) {
+    let li = document.createElement('li');
+    ul.appendChild(li);
+    li.innerHTML += item;
+});
 </script>
-</head>
-
-<body>
-	<div>
-		<ul>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-		</ul>
-	</div>
-</body>
 </html>
