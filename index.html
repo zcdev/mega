@@ -5,41 +5,110 @@
 <title>Mega Million</title>
 <style>
 	body {
-		background: #000;
+		background: #204c7d;
 		color: #fff;
 		font-family: arial;
 		margin: auto;
 		text-align: center;
 	}
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		user-select: none; /* supported by Chrome and Opera */
+	   -webkit-user-select: none; /* Safari */
+	   -khtml-user-select: none; /* Konqueror HTML */
+	   -moz-user-select: none; /* Firefox */
+	   -ms-user-select: none; /* Internet Explorer/Edge */
+	}
 	li {
 		border-radius: 100%;
 		background: #fff;
-		width: 100px;
-		height: 100px;
+		width: 90px;
+		height: 90px;
 		color: #000;
-		margin-left: 0;
 		font-size: 50px;
-		line-height: 2;
-		padding: 10px;
+		line-height: 90px;
+		padding: 8px;
 		text-align: center;
 		display: inline-block;
-		margin: 10px;
+		margin: 14px;
 	}
 	li:last-child {
-		color: red;
+		background-color: red;
+	}
+	canvas {
+		position: relative;
+		top: 50px;
+	}
+	#header {
+		background-image: url('rays.png');
+		background-position: center;
+		background-size: 110%;
+		background-repeat: no-repeat;
+		position: relative;
+		top: -500px;
+		height: 800px;
+	}
+	#logo {
+		position: relative;
+		top: 500px;
+	}
+	#container {
+		position: relative;
+		margin: auto;
+		top: -420px;
+	}
+	#numbers {
+		background: #e9e9e9;
+		border-radius: 20px;
+		border: 8px solid #231f20;
+		margin: -86px 15% 0 15%;
+
+	}
+	#button {
+		background: #ec2127;
+		color: #fff;
+		font-size: 30px;
+		padding: 4px 8px;
+
 	}
 </style>
 </head>
 
 <body>
-	<h1>Mega Million Numbers Generator</h1>
+	<div id="header"><img id="logo" src="mega_logo.png" width="500"></div>
+	<div id="container">
+			<button id="button" onClick="window.location.reload()">GENERATE</button>
+	<h2>Scratch and reveal your winning numbers</h2>
+	<canvas class="canvas" id="js-canvas" width="800" height="111"></canvas>
 	<div id="numbers">
+		<ul>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+	</div>
 	</div>
 </body>
 <script>
+
+// Shuffle
+
+shuffle();
+document.querySelector('button').addEventListener('click', shuffle);
+
 function generator(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+function shuffle() {
+
+
+
 let array = [];
 for (let i=0; i<6; i++){	
 let mega = generator(1,15);
@@ -52,14 +121,132 @@ let nums = generator(1,75);
 		}
         array.push(nums);
     }
-}      
+}
 
-let ul = document.createElement('ul');
-document.getElementById('numbers').appendChild(ul);
-array.forEach((item) => {
-    let li = document.createElement('li');
-    ul.appendChild(li);
-    li.innerHTML += item;
-});
+
+let ul = document.querySelector('ul');
+let items = ul.getElementsByTagName('li');
+for (let i = 0; i < items.length; ++i) {
+  items[i].innerHTML = array[i];
+}
+
+
+
+}
+
+
+
+
+// Canvas
+
+(function() {
+  
+  'use strict';
+  
+  let isDrawing, lastPoint;
+  let container    = document.getElementById('js-container'),
+      canvas       = document.getElementById('js-canvas'),
+      canvasWidth  = canvas.width,
+      canvasHeight = canvas.height,
+      ctx          = canvas.getContext('2d'),
+      image        = new Image(),
+      brush        = new Image();
+
+  image.src = 'balls.png';
+image.onload = function() {
+    ctx.drawImage(image, 0, 0);
+};
+
+
+  brush.src = 'brush.png';
+  
+  canvas.addEventListener('mousedown', handleMouseDown, false);
+  canvas.addEventListener('touchstart', handleMouseDown, false);
+  canvas.addEventListener('mousemove', handleMouseMove, false);
+  canvas.addEventListener('touchmove', handleMouseMove, false);
+  canvas.addEventListener('mouseup', handleMouseUp, false);
+  canvas.addEventListener('touchend', handleMouseUp, false);
+  
+  function distanceBetween(point1, point2) {
+    return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
+  }
+  
+  function angleBetween(point1, point2) {
+    return Math.atan2( point2.x - point1.x, point2.y - point1.y );
+  }
+  
+  function getFilledInPixels(stride) {
+    if (!stride || stride < 1) { stride = 1; }
+    
+    let pixels   = ctx.getImageData(0, 0, canvasWidth, canvasHeight),
+        pdata    = pixels.data,
+        l        = pdata.length,
+        total    = (l / stride),
+        count    = 0;
+    
+    for(let i = count = 0; i < l; i += stride) {
+      if (parseInt(pdata[i]) === 0) {
+        count++;
+      }
+    }
+    
+    return Math.round((count / total) * 100);
+  }
+  
+  function getMouse(e, canvas) {
+    let offsetX = 0, offsetY = 0, mx, my;
+
+    if (canvas.offsetParent !== undefined) {
+      do {
+        offsetX += canvas.offsetLeft;
+        offsetY += canvas.offsetTop;
+      } while ((canvas = canvas.offsetParent));
+    }
+
+    mx = (e.pageX || e.touches[0].clientX) - offsetX;
+    my = (e.pageY || e.touches[0].clientY) - offsetY;
+
+    return {x: mx, y: my};
+  }
+  
+  function handlePercentage(filledInPixels) {
+    filledInPixels = filledInPixels || 0;
+    console.log(filledInPixels + '%');
+    if (filledInPixels > 50) {
+      canvas.parentNode.removeChild(canvas);
+    }
+  }
+  
+  function handleMouseDown(e) {
+    isDrawing = true;
+    lastPoint = getMouse(e, canvas);
+  }
+
+  function handleMouseMove(e) {
+    if (!isDrawing) { return; }
+    
+    e.preventDefault();
+
+    let currentPoint = getMouse(e, canvas),
+        dist = distanceBetween(lastPoint, currentPoint),
+        angle = angleBetween(lastPoint, currentPoint),
+        x, y;
+    
+    for (let i = 0; i < dist; i++) {
+      x = lastPoint.x + (Math.sin(angle) * i) - 25;
+      y = lastPoint.y + (Math.cos(angle) * i) - 25;
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.drawImage(brush, x, y);
+    }
+    
+    lastPoint = currentPoint;
+    handlePercentage(getFilledInPixels(32));
+  }
+
+  function handleMouseUp(e) {
+    isDrawing = false;
+  }
+ 
+})();
 </script>
 </html>
