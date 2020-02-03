@@ -11,6 +11,9 @@
 		margin: auto;
 		text-align: center;
 	}
+	h2 {
+		font-size: 30px;
+	}
 	ul {
 		list-style: none;
 		padding: 0;
@@ -23,16 +26,16 @@
 	}
 	li {
 		border-radius: 100%;
-		background: #fff;
-		width: 90px;
-		height: 90px;
+		background: #f9d576;
+		width: 95px;
+		height: 95px;
 		color: #000;
 		font-size: 50px;
 		line-height: 90px;
-		padding: 8px;
+		padding: 7px;
 		text-align: center;
 		display: inline-block;
-		margin: 14px;
+		margin: 12px;
 	}
 	li:last-child {
 		background-color: red;
@@ -64,15 +67,26 @@
 		background: #e9e9e9;
 		border-radius: 20px;
 		border: 8px solid #231f20;
-		margin: -110px 5% 0 5%;
+		margin: -107px 5% 0 5%;
 
 	}
 	#button {
 		background: #ec2127;
 		color: #fff;
 		font-size: 30px;
-		padding: 4px 8px;
+		padding: 6px 20px;
+		border-radius: 8px;
+		border: 1px solid #fff;
+	}
 
+	.glow {
+  		animation: glowing 5000ms infinite;
+	}
+	@keyframes glowing {
+	  0% { box-shadow: 0 0 0px #fff; }
+	  40% { box-shadow: 0 0 10px #fff; }
+	  60% { box-shadow: 0 0 20px #fff; }
+	  100% { box-shadow: 0 0 -10px #fff; }
 	}
 </style>
 </head>
@@ -80,7 +94,7 @@
 <body>
 	<div id="header"><img id="logo" src="mega_logo.png" width="500"></div>
 	<div id="container">
-	<button id="button" onClick="window.location.reload()">GENERATE</button>
+	<button id="button" class="glow" onClick="window.location.reload()">GENERATE</button>
 	<h2>Scratch and reveal your winning numbers</h2>
 	<canvas class="canvas" id="js-canvas" width="800" height="134"></canvas>
 	<div id="numbers">
@@ -98,8 +112,8 @@
 <script>
 
 // Shuffle
-
 shuffle();
+
 document.querySelector('button').addEventListener('click', shuffle);
 
 function generator(min, max) {
@@ -107,38 +121,30 @@ function generator(min, max) {
 }
 
 function shuffle() {
+	let array = [];
+	for (let i=0; i<6; i++){	
+	let mega = generator(1,15);
+	let nums = generator(1,75);
+		if (i > 1) {
+			array.push(mega);
+		} else { 
+	        while (array.indexOf(nums) > -1) {
+			nums = generator(1,75);
+			}
+	        array.push(nums);
+	    }
+	}
 
+	let ul = document.querySelector('ul');
+	let items = ul.getElementsByTagName('li');
 
-
-let array = [];
-for (let i=0; i<6; i++){	
-let mega = generator(1,15);
-let nums = generator(1,75);
-	if (i > 1) {
-		array.push(mega);
-	} else { 
-        while (array.indexOf(nums) > -1) {
-		nums = generator(1,75);
-		}
-        array.push(nums);
-    }
+	for (let i = 0; i < items.length; ++i) {
+	  items[i].innerHTML = array[i];
+	}
 }
-
-
-let ul = document.querySelector('ul');
-let items = ul.getElementsByTagName('li');
-for (let i = 0; i < items.length; ++i) {
-  items[i].innerHTML = array[i];
-}
-
-
-
-}
-
-
-
 
 // Canvas
+// https://github.com/andreruffert/scratchie.js
 
 (function() {
   
@@ -154,10 +160,9 @@ for (let i = 0; i < items.length; ++i) {
       brush        = new Image();
 
   image.src = 'balls.png';
-image.onload = function() {
+	image.onload = function() {
     ctx.drawImage(image, 0, 0);
-};
-
+  };
 
   brush.src = 'brush.png';
   
